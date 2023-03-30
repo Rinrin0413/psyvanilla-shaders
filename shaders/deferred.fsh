@@ -18,5 +18,5 @@ void main() {
      * 6 = gaux3
      * 7 = gaux4
     */
-	gl_FragData[0] = vec4(albedo, 1.0); // gcolor
+    gl_FragData[0] = vec4(albedo, 1.0); // gcolor
 }

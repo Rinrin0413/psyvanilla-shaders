@@ -26,52 +26,52 @@ float textureNoise(const vec2 pos) {
 
 #define ENABLE_WATER_WAVES
 float getWaterWav(const vec2 pos, const float time) {
-	float wav = 0.0;
+    float wav = 0.0;
 #   if defined ENABLE_WATER_WAVES
-		vec2 p = pos * 2.0;
-		
-		wav += textureNoise(vec2(p.x * 1.4 + time * 0.8, p.y * 1.2));
-		wav += textureNoise(vec2(p.x * 0.8 - time * 0.6, p.y * 1.2));
-		wav += textureNoise(vec2(p.x * 1.2,              p.y * 0.6 + time * 1.8));
-		wav += textureNoise(vec2(p.x * 0.7,              p.y * 1.3 - time * 1.2));
-		wav += textureNoise(vec2(p.x * 1.6 + time * 1.3, p.y * 1.8 - time * 1.2));
-		wav += textureNoise(vec2(p.x * 0.5 - time * 0.8, p.y * 0.9 + time * 0.5));
-		wav += textureNoise(vec2(p.x * 1.2 + time * 0.7, p.y * 1.3 + time * 0.8));
-		wav += textureNoise(vec2(p.x * 0.9 - time * 0.9, p.y * 0.8 - time * 0.7));
+        vec2 p = pos * 2.0;
+        
+        wav += textureNoise(vec2(p.x * 1.4 + time * 0.8, p.y * 1.2));
+        wav += textureNoise(vec2(p.x * 0.8 - time * 0.6, p.y * 1.2));
+        wav += textureNoise(vec2(p.x * 1.2,              p.y * 0.6 + time * 1.8));
+        wav += textureNoise(vec2(p.x * 0.7,              p.y * 1.3 - time * 1.2));
+        wav += textureNoise(vec2(p.x * 1.6 + time * 1.3, p.y * 1.8 - time * 1.2));
+        wav += textureNoise(vec2(p.x * 0.5 - time * 0.8, p.y * 0.9 + time * 0.5));
+        wav += textureNoise(vec2(p.x * 1.2 + time * 0.7, p.y * 1.3 + time * 0.8));
+        wav += textureNoise(vec2(p.x * 0.9 - time * 0.9, p.y * 0.8 - time * 0.7));
 
-		return wav / 256.0;
+        return wav / 256.0;
 #   else
         return 0.0;
 #   endif
 }
 
 vec3 getWaterWavNormal(const vec2 pos, const float time) {
-	const float texStep = 0.04;
+    const float texStep = 0.04;
     
-	float height = getWaterWav(pos, time);
-	vec2  delta  = vec2(height, height);
+    float height = getWaterWav(pos, time);
+    vec2  delta  = vec2(height, height);
 
     delta.x -= getWaterWav(pos + vec2(texStep, 0.0), time);
     delta.y -= getWaterWav(pos + vec2(0.0, texStep), time);
     
-	return normalize(vec3(delta / texStep, 1.0));
+    return normalize(vec3(delta / texStep, 1.0));
 }
 
 float fogify(const float x, const float w) {
-	return w / (x * x + w);
+    return w / (x * x + w);
 }
 
 void main() {
-	vec4 albedo = texture2D(texture, uv0) * col * texture2D(lightmap, uv1);
-	vec3 worldNormal = vec3(0.0, 1.0, 0.0);
-	if (0.5 < waterFlag) {
-		worldNormal = normalize(getWaterWavNormal(fragPos.xz, frameTimeCounter) * tbnMatrix);
-		worldNormal = mat3(gbufferModelViewInverse) * worldNormal;
-	}
+    vec4 albedo = texture2D(texture, uv0) * col * texture2D(lightmap, uv1);
+    vec3 worldNormal = vec3(0.0, 1.0, 0.0);
+    if (0.5 < waterFlag) {
+        worldNormal = normalize(getWaterWavNormal(fragPos.xz, frameTimeCounter) * tbnMatrix);
+        worldNormal = mat3(gbufferModelViewInverse) * worldNormal;
+    }
 
-	float cosTheta = abs(dot(normalize(relPos), worldNormal));
+    float cosTheta = abs(dot(normalize(relPos), worldNormal));
 
-	if (0.5 < waterFlag) albedo.a = mix(1.0, 0.1, cosTheta);
+    if (0.5 < waterFlag) albedo.a = mix(1.0, 0.1, cosTheta);
 
     /* DRAWBUFFERS:02 */
     /*
@@ -84,6 +84,6 @@ void main() {
      * 6 = gaux3
      * 7 = gaux4
     */
-	gl_FragData[0] = albedo; // gcolor
+    gl_FragData[0] = albedo; // gcolor
     gl_FragData[1] = vec4((worldNormal + 1.0) * 0.5, waterFlag); // gnormal
 }

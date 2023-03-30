@@ -12,13 +12,13 @@ uniform vec3 skyColor;
 varying vec2 uv;
 
 vec4 getViewPos(const mat4 projInv, const vec2 uv, const float depth) {
-	vec4 viewPos = projInv * vec4(vec3(uv, depth) * 2.0 - 1.0, 1.0);
-	return viewPos / viewPos.w;
+    vec4 viewPos = projInv * vec4(vec3(uv, depth) * 2.0 - 1.0, 1.0);
+    return viewPos / viewPos.w;
 }
 
 vec4 getRelPos(const mat4 modelViewInv, const mat4 projInv, const vec2 uv, const float depth) {
-	vec4 relPos = modelViewInv * getViewPos(projInv, uv, depth);
-	return relPos / relPos.w;
+    vec4 relPos = modelViewInv * getViewPos(projInv, uv, depth);
+    return relPos / relPos.w;
 }
 
 // Based on one by Chocapic13
@@ -29,38 +29,38 @@ vec3 getRayTraceFactor(
     const vec3 viewPos, 
     const vec3 reflectPos
 ) {
-	const int refinementSteps = 3;
-	const int raySteps = 32;
+    const int refinementSteps = 3;
+    const int raySteps = 32;
 
-	vec3 rayTracePosHit = vec3(0.0);
-	
-	vec3 refPos = reflectPos;
-	vec3 startPos = viewPos + refPos + 0.05;
-	vec3 tracePos = refPos;
+    vec3 rayTracePosHit = vec3(0.0);
+        
+    vec3 refPos = reflectPos;
+    vec3 startPos = viewPos + refPos + 0.05;
+    vec3 tracePos = refPos;
 
     int sr = 0;
     for (int i = 0; i < raySteps; i++) {
         vec4 uv = proj * vec4(startPos, 1.0);
         uv.xyz = uv.xyz / uv.w * 0.5 + 0.5;
        
-	    if (uv.x < 0 || uv.x > 1 || uv.y < 0 || uv.y > 1 || uv.z < 0 || uv.z > 1.0) break;
+        if (uv.x < 0 || uv.x > 1 || uv.y < 0 || uv.y > 1 || uv.z < 0 || uv.z > 1.0) break;
 
         vec3 viewPosAlt = getViewPos(projInv, uv.xy, texture2D(depthTex, uv.xy).x).xyz;
-		if (distance(startPos, viewPosAlt) < length(refPos) * pow(length(tracePos), 0.1)) {
-			sr++;
-			if (refinementSteps <= sr) {
-				rayTracePosHit = vec3(uv.xy, 1.0);
-				break;
-			}
+        if (distance(startPos, viewPosAlt) < length(refPos) * pow(length(tracePos), 0.1)) {
+            sr++;
+            if (refinementSteps <= sr) {
+                rayTracePosHit = vec3(uv.xy, 1.0);
+                break;
+            }
 
-			tracePos -= refPos;
-			refPos *= 0.07;
+            tracePos -= refPos;
+            refPos *= 0.07;
         }
 
         refPos *= 2.0;
         tracePos += refPos;
-		startPos = viewPos + tracePos;
-	}
+        startPos = viewPos + tracePos;
+    }
 
     return rayTracePosHit;
 }
@@ -98,5 +98,5 @@ void main() {
      * 6 = gaux3
      * 7 = gaux4
     */
-	gl_FragData[0] = vec4(albedo, 1.0); // gcolor
+    gl_FragData[0] = vec4(albedo, 1.0); // gcolor
 }
