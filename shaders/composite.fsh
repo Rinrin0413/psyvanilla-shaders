@@ -87,7 +87,8 @@ if (normal.a > 0.0) {
     albedo = mix(reflection, albedo, cosTheta);
 }
 
-    /* DRAWBUFFERS:0
+    /* DRAWBUFFERS:0 */
+    /*
      * 0 = gcolor
      * 1 = gdepth
      * 2 = gnormal

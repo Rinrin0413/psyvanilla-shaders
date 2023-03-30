@@ -75,7 +75,8 @@ if (waterFlag > 0.5) {
 	albedo.a = mix(1.0, 0.1, cosTheta);
 }
 
-    /* DRAWBUFFERS:02
+    /* DRAWBUFFERS:02 */
+    /*
      * 0 = gcolor
      * 1 = gdepth
      * 2 = gnormal
