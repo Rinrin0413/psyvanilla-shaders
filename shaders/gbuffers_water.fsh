@@ -62,18 +62,16 @@ float fogify(const float x, const float w) {
 }
 
 void main() {
-vec4 albedo = texture2D(texture, uv0) * col * texture2D(lightmap, uv1);
-vec3 worldNormal = vec3(0.0, 1.0, 0.0);
-if (waterFlag > 0.5) {
-    worldNormal = normalize(getWaterWavNormal(fragPos.xz, frameTimeCounter) * tbnMatrix);
-    worldNormal = mat3(gbufferModelViewInverse) * worldNormal;
-}
+	vec4 albedo = texture2D(texture, uv0) * col * texture2D(lightmap, uv1);
+	vec3 worldNormal = vec3(0.0, 1.0, 0.0);
+	if (0.5 < waterFlag) {
+		worldNormal = normalize(getWaterWavNormal(fragPos.xz, frameTimeCounter) * tbnMatrix);
+		worldNormal = mat3(gbufferModelViewInverse) * worldNormal;
+	}
 
-float cosTheta = abs(dot(normalize(relPos), worldNormal));
+	float cosTheta = abs(dot(normalize(relPos), worldNormal));
 
-if (waterFlag > 0.5) {
-	albedo.a = mix(1.0, 0.1, cosTheta);
-}
+	if (0.5 < waterFlag) albedo.a = mix(1.0, 0.1, cosTheta);
 
     /* DRAWBUFFERS:02 */
     /*
@@ -87,5 +85,5 @@ if (waterFlag > 0.5) {
      * 7 = gaux4
     */
 	gl_FragData[0] = albedo; // gcolor
-        gl_FragData[1] = vec4((worldNormal + 1.0) * 0.5, waterFlag); // gnormal
+    gl_FragData[1] = vec4((worldNormal + 1.0) * 0.5, waterFlag); // gnormal
 }

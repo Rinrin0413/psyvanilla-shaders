@@ -5,7 +5,7 @@ uniform sampler2D gcolor;
 varying vec2 uv;
 
 void main() {
-vec3 albedo = texture2D(gcolor, uv).rgb;
+    vec3 albedo = texture2D(gcolor, uv).rgb;
 
     /* DRAWBUFFERS:0 */
     /*
